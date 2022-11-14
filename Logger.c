@@ -13,7 +13,7 @@
 #include "Logger.h"
 
 
-LoggerConfig default_config = {TRUE, "%Y:%m:%d %H:%M:%S", "[INFO] ", "[ERROR] ", "[WARNING] ", "[CRITICAL]", "[PANIC]"};
+LoggerConfig default_config = {TRUE, "%Y-%m-%d %H:%M:%S", "[INFO]", "[ERROR]", "[WARNING] ", "[CRITICAL]", "[PANIC]"};
 
 
 
@@ -24,8 +24,10 @@ Logger *Logger_Create(LoggerConfig *config) {
     Logger *logger = (Logger *) malloc(sizeof(*logger));
 
     if(config == NULL) {
+        printf("loading default\n");
         logger->config = &default_config;
     } else {
+        printf("loading own\n");
         logger->config = config;
     }
 
@@ -128,7 +130,7 @@ void logger_log_timestamp(Logger *logger, struct timeval *tv, int milli) {
 
     strftime(tfmt_buf, 26, logger->config->timeformat_str, timeinfo);
 
-    fprintf(logger->fp, "%s.%03d: ", tfmt_buf, milli);
+    fprintf(logger->fp, "%s.%03d ", tfmt_buf, milli);
 }
 
 /**  Logs a string in printf format string style with variable arguments like printf
@@ -151,17 +153,17 @@ void Logger_Log(Logger *logger, int kind,  char *fmt, ...) {
     
     switch(kind){
         case LOGGER_INFO:
-            fprintf(logger->fp, "%s: ", logger->config->fmtInfo); break;
+            fprintf(logger->fp, "%s%4s ", logger->config->fmtInfo, " "); break;
         case LOGGER_ERROR:
-            fprintf(logger->fp, "%s: ", logger->config->fmtError); break;
+            fprintf(logger->fp, "%s%3s ", logger->config->fmtError, " "); break;
         case LOGGER_WARNING:
-            fprintf(logger->fp, "%s: ", logger->config->fmtWarning); break;
+            fprintf(logger->fp, "%s%1s", logger->config->fmtWarning, " "); break;
         case LOGGER_CRITICAL:
-            fprintf(logger->fp, "%s: ", logger->config->fmtCritical); break;
+            fprintf(logger->fp, "%s ", logger->config->fmtCritical); break;
         case LOGGER_PANIC:
-            fprintf(logger->fp, "%s: ", logger->config->fmtPanic); break;
+            fprintf(logger->fp, "%s%3s ", logger->config->fmtPanic, " "); break;
         default:
-            fprintf(logger->fp, "%s: ", logger->config->fmtInfo); break;
+            fprintf(logger->fp, "%s%4s ", logger->config->fmtInfo, " "); break;
             
     }
 

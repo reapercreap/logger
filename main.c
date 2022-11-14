@@ -3,7 +3,8 @@
 void *log_tester(void *logger) {
     int i = 0;
     while(TRUE) {
-        Logger_Log((Logger*) logger, i, "teststring %d", i++);
+        printf("i is %d\n", i);
+        Logger_Log((Logger*) logger, LOGGER_INFO, "teststring %d", i++);
         sleep(10);
     }
 }
@@ -16,7 +17,7 @@ int main(void) {
     conf.fmtPanic = "Panic";
     conf.fmtWarning = "Warning";
 
-    Logger *log = Logger_Create(&conf);
+    Logger *log = Logger_Create(NULL);
     Logger_setLogfile(log, "test.log");
     
     int i;
